@@ -1,0 +1,134 @@
+psql (18.6 (Homebrew))
+Type "help" for help.
+
+postgres=# \l
+                                                                List of databases
+   Name    |      Owner      | Encoding | Locale Provider |   Collate   |    Ctype    | Locale | ICU Rules |          Access privileges          
+-----------+-----------------+----------+-----------------+-------------+-------------+--------+-----------+-------------------------------------
+ postgres  | nurizaesenbaeva | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |        |           | 
+ template0 | nurizaesenbaeva | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |        |           | =c/nurizaesenbaeva                 +
+           |                 |          |                 |             |             |        |           | nurizaesenbaeva=CTc/nurizaesenbaeva
+ template1 | nurizaesenbaeva | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |        |           | =c/nurizaesenbaeva                 +
+           |                 |          |                 |             |             |        |           | nurizaesenbaeva=CTc/nurizaesenbaeva
+(3 rows)
+
+postgres=# \dt
+Did not find any tables.
+postgres=# \h SELECT
+Command:     SELECT
+Description: retrieve rows from a table or view
+Syntax:
+[ WITH [ RECURSIVE ] with_query [, ...] ]
+SELECT [ ALL | DISTINCT [ ON ( expression [, ...] ) ] ]
+    [ { * | expression [ [ AS ] output_name ] } [, ...] ]
+    [ FROM from_item [, ...] ]
+    [ WHERE condition ]
+    [ GROUP BY [ ALL | DISTINCT ] grouping_element [, ...] ]
+    [ HAVING condition ]
+    [ WINDOW window_name AS ( window_definition ) [, ...] ]
+    [ { UNION | INTERSECT | EXCEPT } [ ALL | DISTINCT ] select ]
+    [ ORDER BY expression [ ASC | DESC | USING operator ] [ NULLS { FIRST | LAST } ] [, ...] ]
+    [ LIMIT { count | ALL } ]
+    [ OFFSET start [ ROW | ROWS ] ]
+    [ FETCH { FIRST | NEXT } [ count ] { ROW | ROWS } { ONLY | WITH TIES } ]
+    [ FOR { UPDATE | NO KEY UPDATE | SHARE | KEY SHARE } [ OF from_reference [, ...] ] [ NOWAIT | SKIP LOCKED ] [...] ]
+
+where from_item can be one of:
+
+    [ ONLY ] table_name [ * ] [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
+                [ TABLESAMPLE sampling_method ( argument [, ...] ) [ REPEATABLE ( seed ) ] ]
+    [ LATERAL ] ( select ) [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
+    with_query_name [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
+    [ LATERAL ] function_name ( [ argument [, ...] ] )
+                [ WITH ORDINALITY ] [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
+    [ LATERAL ] function_name ( [ argument [, ...] ] ) [ AS ] alias ( column_definition [, ...] )
+    [ LATERAL ] function_name ( [ argument [, ...] ] ) AS ( column_definition [, ...] )
+    [ LATERAL ] ROWS FROM( function_name ( [ argument [, ...] ] ) [ AS ( column_definition [, ...] ) ] [, ...] )
+                [ WITH ORDINALITY ] [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
+    from_item join_type from_item { ON join_condition | USING ( join_column [, ...] ) [ AS join_using_alias ] }
+    from_item NATURAL join_type from_item
+    from_item CROSS JOIN from_item
+
+and grouping_element can be one of:
+
+    ( )
+    expression
+    ( expression [, ...] )
+    ROLLUP ( { expression | ( expression [, ...] ) } [, ...] )
+    CUBE ( { expression | ( expression [, ...] ) } [, ...] )
+    GROUPING SETS ( grouping_element [, ...] )
+
+and with_query is:
+
+    with_query_name [ ( column_name [, ...] ) ] AS [ [ NOT ] MATERIALIZED ] ( select | values | insert | update | delete | merge )
+        [ SEARCH { BREADTH | DEPTH } FIRST BY column_name [, ...] SET search_seq_col_name ]
+        [ CYCLE column_name [, ...] SET cycle_mark_col_name [ TO cycle_mark_value DEFAULT cycle_mark_default ] USING cycle_path_col_name ]
+
+TABLE [ ONLY ] table_name [ * ]
+
+URL: https://www.postgresql.org/docs/18/sql-select.html
+
+postgres=# \?
+General
+  \copyright             show PostgreSQL usage and distribution terms
+  \crosstabview [COLUMNS] execute query and display result in crosstab
+  \errverbose            show most recent error message at maximum verbosity
+  \g [(OPTIONS)] [FILE]  execute query (and send result to file or |pipe);
+                         \g with no arguments is equivalent to a semicolon
+  \gdesc                 describe result of query, without executing it
+  \gexec                 execute query, then execute each value in its result
+  \gset [PREFIX]         execute query and store result in psql variables
+  \gx [(OPTIONS)] [FILE] as \g, but forces expanded output mode
+  \q                     quit psql
+  \restrict RESTRICT_KEY
+                         enter restricted mode with provided key
+  \unrestrict RESTRICT_KEY
+                         exit restricted mode if key matches
+  \watch [[i=]SEC] [c=N] [m=MIN]
+                         execute query every SEC seconds, up to N times,
+                         stop if less than MIN rows are returned
+
+Help
+  \? [commands]          show help on backslash commands
+  \? options             show help on psql command-line options
+  \? variables           show help on special variables
+  \h [NAME]              help on syntax of SQL commands, * for all commands
+
+Query Buffer
+  \e [FILE] [LINE]       edit the query buffer (or file) with external editor
+  \ef [FUNCNAME [LINE]]  edit function definition with external editor
+  \ev [VIEWNAME [LINE]]  edit view definition with external editor
+  \p                     show the contents of the query buffer
+  \r                     reset (clear) the query buffer
+  \s [FILE]              display history or save it to file
+  \w FILE                write query buffer to file
+
+Input/Output
+  \copy ...              perform SQL COPY with data stream to the client host
+  \echo [-n] [STRING]    write string to standard output (-n for no newline)
+  \i FILE                execute commands from file
+  \ir FILE               as \i, but relative to location of current script
+  \o [FILE]              send all query results to file or |pipe
+  \qecho [-n] [STRING]   write string to \o output stream (-n for no newline)
+  \warn [-n] [STRING]    write string to standard error (-n for no newline)
+
+Conditional
+  \if EXPR               begin conditional block
+  \elif EXPR             alternative within current conditional block
+  \else                  final alternative within current conditional block
+  \endif                 end conditional block
+
+Informational
+  (options: S = show system objects, x = expanded mode, + = additional detail)
+  \d[Sx+]                list tables, views, and sequences
+  \d[S+]   NAME          describe table, view, sequence, or index
+  \da[Sx]  [PATTERN]     list aggregates
+  \dA[x+]  [PATTERN]     list access methods
+  \dAc[x+] [AMPTRN [TYPEPTRN]]  list operator classes
+  \dAf[x+] [AMPTRN [TYPEPTRN]]  list operator families
+  \dAo[x+] [AMPTRN [OPFPTRN]]   list operators of operator families
+  \dAp[x+] [AMPTRN [OPFPTRN]]   list support functions of operator families
+  \db[x+]  [PATTERN]     list tablespaces
+  \dc[Sx+] [PATTERN]     list conversions
+  \dconfig[x+] [PATTERN] list configuration parameters
+  \dC[x+]  [PATTERN]     list casts

@@ -1,0 +1,14 @@
+postgres=# -- create data
+CREATE TABLE students (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    age INT
+);
+CREATE TABLE
+
+postgres-# \dt
+               List of tables
+ Schema |   Name   | Type  |      Owner      
+--------+----------+-------+-----------------
+ public | students | table | nurizaesenbaeva
+(1 row)

@@ -1,0 +1,5 @@
+postgres=# -- delete table
+DROP TABLE students;
+DROP TABLE
+postgres=# \dt
+Did not find any tables.
