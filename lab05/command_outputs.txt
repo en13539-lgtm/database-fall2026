@@ -1,0 +1,29 @@
+## CREATE DATABASE
+
+postgres=# CREATE DATABASE university;
+CREATE DATABASE
+
+postgres=# \l
+                                                                List of databases
+    Name    |      Owner      | Encoding | Locale Provider |   Collate   |    Ctype    | Locale | ICU Rules |          Access privileges          
+------------+-----------------+----------+-----------------+-------------+-------------+--------+-----------+-------------------------------------
+ postgres   | nurizaesenbaeva | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |        |           | 
+ template0  | nurizaesenbaeva | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |        |           | =c/nurizaesenbaeva                 +
+            |                 |          |                 |             |             |        |           | nurizaesenbaeva=CTc/nurizaesenbaeva
+ template1  | nurizaesenbaeva | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |        |           | =c/nurizaesenbaeva                 +
+            |                 |          |                 |             |             |        |           | nurizaesenbaeva=CTc/nurizaesenbaeva
+ university | nurizaesenbaeva | UTF8     | libc            | en_US.UTF-8 | en_US.UTF-8 |        |           | 
+(4 rows)
+
+
+## Switch databases
+postgres=# \c university
+You are now connected to database "university" as user "nurizaesenbaeva".
+university=# 
+
+## Connect to the created db
+% psql -h localhost -p 5432 -U nurizaesenbaeva -d university
+psql (18.6 (Homebrew))
+Type "help" for help.
+
+university=# 
