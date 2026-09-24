@@ -1,0 +1,56 @@
+## Basic Select
+postgres=# SELECT name, age FROM students;
+ name  | age 
+-------+-----
+ Alice |  21
+ Bob   |  23
+(2 rows)
+
+
+## WHERE
+postgres=# SELECT name, age FROM students WHERE name = 'Alice';
+
+ name  | age 
+-------+-----
+ Alice |  21
+(1 row)
+
+## ORDER BY
+
+postgres=# SELECT * FROM students ORDER BY name;
+ id |  name   | age |   faculty   
+----+---------+-----+-------------
+  1 | Alice   |  21 | Engineering
+  4 | Asemai  |  20 | Econimics
+  5 | Atai    |  21 | AMI
+  2 | Bob     |  23 | LAS
+  6 | Ilya    |  22 | Engineering
+  3 | Valeria |  21 | AMI
+(6 rows)
+
+## LIMIT 
+postgres=# SELECT name, age FROM students LIMIT 2;
+
+ name  | age 
+-------+-----
+ Alice |  21
+ Bob   |  23
+(2 rows)
+
+postgres=# SELECT name, age FROM students LIMIT 1;
+ name  | age 
+-------+-----
+ Alice |  21
+(1 row)
+
+##Comments
+postgres=# -- This query retrieves all students from the Engineering faculty.
+SELECT name, faculty FROM students WHERE faculty = 'Engineering';
+
+/* This is a multi-line comment.
+It can span multiple lines for detailed explanations. */
+ name  |   faculty   
+-------+-------------
+ Alice | Engineering
+ Ilya  | Engineering
+(2 rows)
