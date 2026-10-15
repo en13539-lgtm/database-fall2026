@@ -1,0 +1,7 @@
+-- Define primary key at column level
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(150)
+);
+
