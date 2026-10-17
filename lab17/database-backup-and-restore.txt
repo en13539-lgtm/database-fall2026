@@ -1,0 +1,35 @@
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_dump -U nurizaesenbaeva -d lab17_backup > backup.sql
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % ls -lh backup.sql 
+-rw-r--r--@ 1 nurizaesenbaeva  staff    10K Oct 17 16:07 backup.sql
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_dump -U nurizaesenbaeva -d lab17_backup -Fc -f backup.dump
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % ls -lh backup.dump
+-rw-r--r--@ 1 nurizaesenbaeva  staff    14K Oct 17 16:08 backup.dump
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % createdb -U nurizaesenbaeva lab17_restored
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_restore -U nurizaesenbaeva -d lab17_restored --exit-on-error backup.dump
+Command was: CREATE TABLE public.courses (
+    course_id integer NOT NULL,
+    course_name character varying(100),
+    credits integer
+);
+
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_restored -c "\dt"
+                   List of tables
+ Schema |       Name       | Type  |      Owner      
+--------+------------------+-------+-----------------
+ public | courses          | table | nurizaesenbaeva
+ public | departments      | table | nurizaesenbaeva
+ public | enrollments      | table | nurizaesenbaeva
+ public | enrollments_bad  | table | nurizaesenbaeva
+ public | student_phones   | table | nurizaesenbaeva
+ public | students         | table | nurizaesenbaeva
+ public | students_3nf     | table | nurizaesenbaeva
+ public | students_3nf_bad | table | nurizaesenbaeva
+(8 rows)
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_restored -c "SELECT COUNT(*) FROM students;"
+ count 
+-------
+     2
+(1 row)

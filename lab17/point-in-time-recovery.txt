@@ -1,0 +1,42 @@
+Point-In-Time-Recovery
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_backup -c "SHOW data_directory;"
+         data_directory          
+---------------------------------
+ /opt/homebrew/var/postgresql@18
+(1 row)
+
+2. Check recovery configuration
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_backup -c "SHOW archive_mode; SHOW archive_command; SHOW restore_command;"
+ archive_mode 
+--------------
+ on
+(1 row)
+
+                   archive_command                    
+------------------------------------------------------
+ cp %p /Users/nurizaesenbaeva/postgres_backups/wal/%f
+(1 row)
+
+ restore_command 
+-----------------
+ 
+(1 row)
+
+3. Create a restore point
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_backup -c "SELECT pg_create_restore_point('before_data_migration');"
+ pg_create_restore_point
+-------------------------
+ 0/80000C8
+(1 row)
+
+4. Verify the base backup
+
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % ls -lh ~/postgres_backups/base/
+total 24544
+-rw-------@ 1 nurizaesenbaeva  staff   517K Oct 17 16:31 backup_manifest
+-rw-------@ 1 nurizaesenbaeva  staff    11M Oct 17 16:31 base.tar.gz
+-rw-------@ 1 nurizaesenbaeva  staff    17K Oct 17 16:31 pg_wal.tar.gz

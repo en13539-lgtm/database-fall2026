@@ -1,0 +1,300 @@
+1. Full DB Backup
+
+_dump: reading user-defined foreign servers
+pg_dump: reading default privileges
+pg_dump: reading user-defined collations
+pg_dump: reading user-defined conversions
+pg_dump: reading type casts
+pg_dump: reading transforms
+pg_dump: reading table inheritance information
+pg_dump: reading event triggers
+pg_dump: finding extension tables
+pg_dump: finding inheritance relationships
+pg_dump: reading column info for interesting tables
+pg_dump: finding table default expressions
+pg_dump: flagging inherited columns in subtables
+pg_dump: reading partitioning data
+pg_dump: reading indexes
+pg_dump: flagging indexes in partitioned tables
+pg_dump: reading extended statistics
+pg_dump: reading constraints
+pg_dump: reading triggers
+pg_dump: reading rewrite rules
+pg_dump: reading policies
+pg_dump: reading row-level security policies
+pg_dump: reading publications
+pg_dump: reading publication membership of tables
+pg_dump: reading publication membership of schemas
+pg_dump: reading subscriptions
+pg_dump: reading subscription membership of tables
+pg_dump: reading large objects
+pg_dump: reading dependency data
+pg_dump: saving encoding = UTF8
+pg_dump: saving "standard_conforming_strings = on"
+pg_dump: saving "search_path = "
+pg_dump: saving database definition
+pg_dump: dumping contents of table "public.courses"
+pg_dump: dumping contents of table "public.departments"
+pg_dump: dumping contents of table "public.employees"
+pg_dump: dumping contents of table "public.employees_imported"
+pg_dump: dumping contents of table "public.enrollments"
+pg_dump: dumping contents of table "public.enrollments_bad"
+pg_dump: dumping contents of table "public.student_phones"
+pg_dump: dumping contents of table "public.students"
+pg_dump: dumping contents of table "public.students_3nf"
+pg_dump: dumping contents of table "public.students_3nf_bad"
+
+
+2. Schema-only Backup
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_dump -U nurizaesenbaeva -d lab17_backup -s -f schema_only.sql
+
+3. Data-only Backup
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_dump -U nurizaesenbaeva -d lab17_backup -a -f data_only.sql 
+
+4. Backup Specific Tablesp
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_dump -U nurizaesenbaeva -d lab17_backup \
+-t students -t courses -f tables_backup.sql
+
+5. Verify backup
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % ls -lh full_backup.dump schema_only.sql data_only.sql tables_backup.sql
+-rw-r--r--@ 1 nurizaesenbaeva  staff   3.3K Oct 17 16:16 data_only.sql
+-rw-r--r--@ 1 nurizaesenbaeva  staff    14K Oct 17 16:14 full_backup.dump
+-rw-r--r--@ 1 nurizaesenbaeva  staff   7.5K Oct 17 16:15 schema_only.sql
+-rw-r--r--@ 1 nurizaesenbaeva  staff   1.9K Oct 17 16:17 tables_backup.sql
+
+6. Validate Full Backup
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_restore --list full_backup.dump
+;
+; Archive created at 2026-10-17 16:14:24 +06
+;     dbname: lab17_backup
+;     TOC Entries: 42
+;     Compression: gzip
+;     Dump Version: 1.16-0
+;     Format: CUSTOM
+;     Integer: 4 bytes
+;     Offset: 8 bytes
+;     Dumped from database version: 18.6 (Homebrew)
+;     Dumped by pg_dump version: 18.6 (Homebrew)
+;
+;
+; Selected TOC Entries:
+;
+224; 1259 25068 TABLE public courses nurizaesenbaeva
+227; 1259 25097 TABLE public departments nurizaesenbaeva
+230; 1259 25587 TABLE public employees nurizaesenbaeva
+229; 1259 25586 SEQUENCE public employees_id_seq nurizaesenbaeva
+3922; 0 0 SEQUENCE OWNED BY public employees_id_seq nurizaesenbaeva
+231; 1259 25600 TABLE public employees_imported nurizaesenbaeva
+225; 1259 25074 TABLE public enrollments nurizaesenbaeva
+223; 1259 25061 TABLE public enrollments_bad nurizaesenbaeva
+222; 1259 25049 TABLE public student_phones nurizaesenbaeva
+221; 1259 25043 TABLE public students nurizaesenbaeva
+228; 1259 25103 TABLE public students_3nf nurizaesenbaeva
+226; 1259 25091 TABLE public students_3nf_bad nurizaesenbaeva
+3733; 2604 25590 DEFAULT public employees id nurizaesenbaeva
+3908; 0 25068 TABLE DATA public courses nurizaesenbaeva
+3911; 0 25097 TABLE DATA public departments nurizaesenbaeva
+3914; 0 25587 TABLE DATA public employees nurizaesenbaeva
+3915; 0 25600 TABLE DATA public employees_imported nurizaesenbaeva
+3909; 0 25074 TABLE DATA public enrollments nurizaesenbaeva
+3907; 0 25061 TABLE DATA public enrollments_bad nurizaesenbaeva
+3906; 0 25049 TABLE DATA public student_phones nurizaesenbaeva
+3905; 0 25043 TABLE DATA public students nurizaesenbaeva
+3912; 0 25103 TABLE DATA public students_3nf nurizaesenbaeva
+3910; 0 25091 TABLE DATA public students_3nf_bad nurizaesenbaeva
+3923; 0 0 SEQUENCE SET public employees_id_seq nurizaesenbaeva
+3741; 2606 25073 CONSTRAINT public courses courses_pkey nurizaesenbaeva
+3747; 2606 25102 CONSTRAINT public departments departments_pkey nurizaesenbaeva
+3753; 2606 25605 CONSTRAINT public employees_imported employees_imported_pkey nurizaesenbaeva
+3751; 2606 25593 CONSTRAINT public employees employees_pkey nurizaesenbaeva
+3739; 2606 25067 CONSTRAINT public enrollments_bad enrollments_bad_pkey nurizaesenbaeva
+3743; 2606 25080 CONSTRAINT public enrollments enrollments_pkey nurizaesenbaeva
+3737; 2606 25055 CONSTRAINT public student_phones student_phones_pkey nurizaesenbaeva
+3745; 2606 25096 CONSTRAINT public students_3nf_bad students_3nf_bad_pkey nurizaesenbaeva
+3749; 2606 25108 CONSTRAINT public students_3nf students_3nf_pkey nurizaesenbaeva
+3735; 2606 25048 CONSTRAINT public students students_pkey nurizaesenbaeva
+3755; 2606 25086 FK CONSTRAINT public enrollments enrollments_course_id_fkey nurizaesenbaeva
+3756; 2606 25081 FK CONSTRAINT public enrollments enrollments_student_id_fkey nurizaesenbaeva
+3754; 2606 25056 FK CONSTRAINT public student_phones student_phones_student_id_fkey nurizaesenbaeva
+3757; 2606 25109 FK CONSTRAINT public students_3nf students_3nf_department_id_fkey nurizaesenbaeva
+
+
+7. Restore Full Backup to Test Database
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_restore -U nurizaesenbaeva -d lab17_full_test --exit-on-error full_backup.dump
+Command was: CREATE TABLE public.courses (
+    course_id integer NOT NULL,
+    course_name character varying(100),
+    credits integer
+);
+
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_full_test -c "\dt"
+                   List of tables
+ Schema |       Name       | Type  |      Owner      
+--------+------------------+-------+-----------------
+ public | courses          | table | nurizaesenbaeva
+ public | departments      | table | nurizaesenbaeva
+ public | enrollments      | table | nurizaesenbaeva
+ public | enrollments_bad  | table | nurizaesenbaeva
+ public | student_phones   | table | nurizaesenbaeva
+ public | students         | table | nurizaesenbaeva
+ public | students_3nf     | table | nurizaesenbaeva
+ public | students_3nf_bad | table | nurizaesenbaeva
+(8 rows)
+
+Automated Backup scripts
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % mkdir -p ~/postgres_backups
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % nano backup.sh
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % chmod +x backup.sh
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % ./backup.sh
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % ls -lh ~/postgres_backups/
+total 32
+-rw-r--r--@ 1 nurizaesenbaeva  staff    14K Oct 17 16:22 lab17_backup_20261017_162212.dump
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_restore --list "$(ls -t ~/postgres_backups/*.dump | head -1)"
+;
+; Archive created at 2026-10-17 16:22:12 +06
+;     dbname: lab17_backup
+;     TOC Entries: 42
+;     Compression: gzip
+;     Dump Version: 1.16-0
+;     Format: CUSTOM
+;     Integer: 4 bytes
+;     Offset: 8 bytes
+;     Dumped from database version: 18.6 (Homebrew)
+;     Dumped by pg_dump version: 18.6 (Homebrew)
+;
+;
+; Selected TOC Entries:
+;
+224; 1259 25068 TABLE public courses nurizaesenbaeva
+227; 1259 25097 TABLE public departments nurizaesenbaeva
+230; 1259 25587 TABLE public employees nurizaesenbaeva
+229; 1259 25586 SEQUENCE public employees_id_seq nurizaesenbaeva
+3922; 0 0 SEQUENCE OWNED BY public employees_id_seq nurizaesenbaeva
+231; 1259 25600 TABLE public employees_imported nurizaesenbaeva
+225; 1259 25074 TABLE public enrollments nurizaesenbaeva
+223; 1259 25061 TABLE public enrollments_bad nurizaesenbaeva
+222; 1259 25049 TABLE public student_phones nurizaesenbaeva
+221; 1259 25043 TABLE public students nurizaesenbaeva
+228; 1259 25103 TABLE public students_3nf nurizaesenbaeva
+226; 1259 25091 TABLE public students_3nf_bad nurizaesenbaeva
+3733; 2604 25590 DEFAULT public employees id nurizaesenbaeva
+3908; 0 25068 TABLE DATA public courses nurizaesenbaeva
+3911; 0 25097 TABLE DATA public departments nurizaesenbaeva
+3914; 0 25587 TABLE DATA public employees nurizaesenbaeva
+3915; 0 25600 TABLE DATA public employees_imported nurizaesenbaeva
+3909; 0 25074 TABLE DATA public enrollments nurizaesenbaeva
+3907; 0 25061 TABLE DATA public enrollments_bad nurizaesenbaeva
+3906; 0 25049 TABLE DATA public student_phones nurizaesenbaeva
+3905; 0 25043 TABLE DATA public students nurizaesenbaeva
+3912; 0 25103 TABLE DATA public students_3nf nurizaesenbaeva
+3910; 0 25091 TABLE DATA public students_3nf_bad nurizaesenbaeva
+3923; 0 0 SEQUENCE SET public employees_id_seq nurizaesenbaeva
+3741; 2606 25073 CONSTRAINT public courses courses_pkey nurizaesenbaeva
+3747; 2606 25102 CONSTRAINT public departments departments_pkey nurizaesenbaeva
+3753; 2606 25605 CONSTRAINT public employees_imported employees_imported_pkey nurizaesenbaeva
+3751; 2606 25593 CONSTRAINT public employees employees_pkey nurizaesenbaeva
+3739; 2606 25067 CONSTRAINT public enrollments_bad enrollments_bad_pkey nurizaesenbaeva
+3743; 2606 25080 CONSTRAINT public enrollments enrollments_pkey nurizaesenbaeva
+3737; 2606 25055 CONSTRAINT public student_phones student_phones_pkey nurizaesenbaeva
+3745; 2606 25096 CONSTRAINT public students_3nf_bad students_3nf_bad_pkey nurizaesenbaeva
+3749; 2606 25108 CONSTRAINT public students_3nf students_3nf_pkey nurizaesenbaeva
+3735; 2606 25048 CONSTRAINT public students students_pkey nurizaesenbaeva
+3755; 2606 25086 FK CONSTRAINT public enrollments enrollments_course_id_fkey nurizaesenbaeva
+3756; 2606 25081 FK CONSTRAINT public enrollments enrollments_student_id_fkey nurizaesenbaeva
+3754; 2606 25056 FK CONSTRAINT public student_phones student_phones_student_id_fkey nurizaesenbaeva
+3757; 2606 25109 FK CONSTRAINT public students_3nf students_3nf_department_id_fkey nurizaesenbaeva
+
+
+7. Incremental Backups - WAL Archiving
+
+lab17_backup=# SHOW config_file;
+                   config_file                   
+-------------------------------------------------
+ /opt/homebrew/var/postgresql@18/postgresql.conf
+(1 row)
+
+lab17_backup=# SHOW wal_level;
+SHOW archive_mode;
+SHOW archive_command;
+ wal_level 
+-----------
+ replica
+(1 row)
+
+ archive_mode 
+--------------
+ off
+(1 row)
+
+ archive_command 
+-----------------
+ (disabled)
+(1 row)
+
+lab17_backup=# \q
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % mkdir -p ~/postgres_backups/wal
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_backup
+psql (18.6 (Homebrew))
+Type "help" for help.
+
+lab17_backup=# ALTER SYSTEM SET wal_level = 'replica';
+ALTER SYSTEM SET archive_mode = 'on';
+ALTER SYSTEM
+ALTER SYSTEM
+lab17_backup=# echo "$HOME/postgres_backups/wal"
+lab17_backup-# ALTER SYSTEM SET archive_command =^C
+lab17_backup=# exit
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 %  echo "$HOME/postgres_backups/wal"
+/Users/nurizaesenbaeva/postgres_backups/wal
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_backup
+psql (18.6 (Homebrew))
+Type "help" for help.
+
+lab17_backup=# ALTER SYSTEM SET archive_command =
+'cp %p /Users/nurizaesenbaeva/postgres_backups/wal/%f';
+ALTER SYSTEM
+lab17_backup=# exit
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % brew services list
+Name          Status  User            File
+postgresql@18 started nurizaesenbaeva ~/Library/LaunchAgents/sh.brew.postgresql@18.plist
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % brew services restart postgresql@18
+Stopping `postgresql@18`... (might take a while)
+==> Successfully stopped `postgresql@18` (label: sh.brew.postgresql@18)
+==> Successfully started `postgresql@18` (label: sh.brew.postgresql@18)
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_backup
+psql (18.6 (Homebrew))
+Type "help" for help.
+
+lab17_backup=# SHOW archive_mode;
+SHOW wal_level;
+SHOW archive_command;
+ archive_mode 
+--------------
+ on
+(1 row)
+
+ wal_level 
+-----------
+ replica
+(1 row)
+
+                   archive_command                    
+------------------------------------------------------
+ cp %p /Users/nurizaesenbaeva/postgres_backups/wal/%f
+(1 row)
+
+lab17_backup=# SELECT pg_switch_wal();
+ pg_switch_wal 
+---------------
+ 0/4756A60
+(1 row)
+
+lab17_backup=# exit
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % ls -lh ~/postgres_backups/wal/
+total 32768
+-rw-------  1 nurizaesenbaeva  staff    16M Oct 17 16:26 000000010000000000000004

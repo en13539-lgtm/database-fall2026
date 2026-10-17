@@ -1,0 +1,31 @@
+Step 8 - Base Backup
+
+PG_BASEBACKUP
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % mkdir -p ~/postgres_backups/base
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_basebackup -h localhost -U nurizaesenbaeva \
+-D ~/postgres_backups/base -Ft -z -P -X stream
+91802/91802 kB (100%), 1/1 tablespace
+
+Step 9 - WAL Archive Management
+
+lab17_backup=# SELECT pg_switch_wal();
+ pg_switch_wal 
+---------------
+ 0/7000078
+(1 row)
+
+
+lab17_backup=# SELECT archived_count, last_archived_wal, last_archived_time
+FROM pg_stat_archiver;
+ archived_count |    last_archived_wal     |      last_archived_time       
+----------------+--------------------------+-------------------------------
+              5 | 000000010000000000000007 | 2026-10-17 16:31:58.399566+06
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % ls -lh ~/postgres_backups/wal/
+total 131080
+-rw-------  1 nurizaesenbaeva  staff    16M Oct 17 16:26 000000010000000000000004
+-rw-------  1 nurizaesenbaeva  staff    16M Oct 17 16:30 000000010000000000000005
+-rw-------  1 nurizaesenbaeva  staff    16M Oct 17 16:31 000000010000000000000006
+-rw-------  1 nurizaesenbaeva  staff   338B Oct 17 16:31 000000010000000000000006.00000028.backup
+-rw-------  1 nurizaesenbaeva  staff    16M Oct 17 16:31 000000010000000000000007

@@ -1,0 +1,237 @@
+Data Migration (Dump and Restore)
+
+1. Export source database
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_dump -U nurizaesenbaeva -d lab17_backup -Fc -f migration.dump
+
+2. Create target database
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % createdb -U nurizaesenbaeva lab17_migrated
+
+3. Restore data
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_restore -U nurizaesenbaeva -d lab17_migrated --exit-on-error migration.dump
+Command was: CREATE TABLE public.courses (
+    course_id integer NOT NULL,
+    course_name character varying(100),
+    credits integer
+);
+
+4. Verify migrated tables
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_migrated -c "\dt"
+                   List of tables
+ Schema |       Name       | Type  |      Owner      
+--------+------------------+-------+-----------------
+ public | courses          | table | nurizaesenbaeva
+ public | departments      | table | nurizaesenbaeva
+ public | enrollments      | table | nurizaesenbaeva
+ public | enrollments_bad  | table | nurizaesenbaeva
+ public | student_phones   | table | nurizaesenbaeva
+ public | students         | table | nurizaesenbaeva
+ public | students_3nf     | table | nurizaesenbaeva
+ public | students_3nf_bad | table | nurizaesenbaeva
+(8 rows)
+
+5. Verify migrated data
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_migrated -c "SELECT COUNT(*) FROM students;"
+ count 
+-------
+     2
+(1 row)
+
+
+Strategy 2: Logical Replication (Minimal Downtime)
+
+migration_pub with puballtables = t.
+
+lab17_backup=# CREATE PUBLICATION migration_pub FOR ALL TABLES;
+WARNING:  "wal_level" is insufficient to publish logical changes
+HINT:  Set "wal_level" to "logical" before creating subscriptions.
+CREATE PUBLICATION
+lab17_backup=# SELECT pubname, puballtables
+FROM pg_publication;
+    pubname    | puballtables 
+---------------+--------------
+ migration_pub | t
+(1 row)
+
+ wal_level 
+-----------
+ replica
+(1 row)
+
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_backup -c "ALTER SYSTEM SET wal_level = 'logical';"
+ALTER SYSTEM
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % brew services list
+Name          Status  User            File
+postgresql@18 started nurizaesenbaeva ~/Library/LaunchAgents/sh.brew.postgresql@18.plist
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % brew services restart postgresql@18
+Stopping `postgresql@18`... (might take a while)
+==> Successfully stopped `postgresql@18` (label: sh.brew.postgresql@18)
+==> Successfully started `postgresql@18` (label: sh.brew.postgresql@18)
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_backup -c "SHOW wal_level;"
+ wal_level 
+-----------
+ logical
+(1 row)
+
+
+
+lab17_migrated=# CREATE SUBSCRIPTION migration_sub
+CONNECTION 'host=localhost dbname=lab17_backup user=nurizaesenbaeva'
+PUBLICATION migration_pub
+WITH (create_slot = false, enabled = false, copy_data = false);
+CREATE SUBSCRIPTION
+
+
+Strategy 3: Physical Replication (Zero Downtime)
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_backup
+psql (18.6 (Homebrew))
+Type "help" for help.
+
+lab17_backup=# ALTER SYSTEM SET wal_level = 'replica';
+ALTER SYSTEM SET max_wal_senders = 3;
+ALTER SYSTEM
+ALTER SYSTEM
+lab17_backup=# exit
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % mkdir -p ~/postgres_backups/standby
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_basebackup -h localhost \
+-D ~/postgres_backups/standby \
+-U nurizaesenbaeva -R -P -X stream
+100108/100108 kB (100%), 1/1 tablespace
+
+Strategy 4: ETL Pipeline Migration
+lab17_backup=# CREATE TABLE staging_employees AS
+SELECT * FROM employees WHERE 1=0;
+SELECT 0
+lab17_backup=# \copy (SELECT * FROM employees LIMIT 10000 OFFSET 0) TO 'employees_batch_1.csv' WITH CSV HEADER
+COPY 5
+lab17_backup=# \copy staging_employees FROM 'employees_batch_1.csv' WITH CSV HEADER
+COPY 5
+lab17_backup=# SELECT COUNT(*) FROM staging_employees;
+ count 
+-------
+     5
+(1 row)
+
+lab17_backup=# INSERT INTO employees
+SELECT * FROM staging_employees
+ON CONFLICT (id) DO UPDATE SET
+    first_name = EXCLUDED.first_name,
+    last_name = EXCLUDED.last_name,
+    email = EXCLUDED.email,
+    department = EXCLUDED.department,
+    salary = EXCLUDED.salary;
+INSERT 0 5
+lab17_backup=# SELECT COUNT(*) FROM employees;
+ count 
+-------
+     5
+(1 row)
+
+
+Migration Best Stragies
+
+lab17_backup=# SELECT COUNT(*) FROM employees;
+ count
+-------
+     5
+(1 row)
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_dump -U nurizaesenbaeva -d lab17_backup \
+-t employees --data-only \
+| psql -U nurizaesenbaeva -d lab17_migrated
+SET
+SET
+SET
+SET
+SET
+SET
+ set_config 
+------------
+ 
+(1 row)
+
+SET
+SET
+SET
+SET
+COPY 5
+ setval 
+--------
+      5
+(1 row)
+
+
+
+lab17_backup=# SELECT pid, usename, application_name, client_addr, state
+FROM pg_stat_activity
+WHERE application_name = 'pg_dump';
+ pid | usename | application_name | client_addr | state 
+-----+---------+------------------+-------------+-------
+(0 rows)
+
+
+lab17_backup=# SELECT COUNT(*) FROM employees;
+ count 
+-------
+     5
+(1 row)
+
+Handling Large Table Migrations
+
+lab17_backup=# CREATE TABLE large_table_2023 PARTITION OF large_table
+FOR VALUES FROM ('2023-01-01') TO ('2024-01-01');
+CREATE TABLE
+
+
+lab17_backup=# \q
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % pg_dump -U nurizaesenbaeva -d lab17_backup \
+-t large_table_2023 > large_table_2023.sql
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % 
+
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_migrated \
+-f large_table_2023.sql
+SET
+SET
+SET
+SET
+SET
+SET
+ set_config 
+------------
+ 
+(1 row)
+
+SET
+SET
+SET
+SET
+SET
+SET
+CREATE TABLE
+ALTER TABLE
+psql:large_table_2023.sql:42: ERROR:  relation "public.large_table" does not exist
+COPY 0
+
+
+nurizaesenbaeva@Nurizas-MacBook-Air lab17 % psql -U nurizaesenbaeva -d lab17_migrated \
+-c "\dt"
+                    List of tables
+ Schema |        Name        | Type  |      Owner      
+--------+--------------------+-------+-----------------
+ public | courses            | table | nurizaesenbaeva
+ public | departments        | table | nurizaesenbaeva
+ public | employees          | table | nurizaesenbaeva
+ public | employees_imported | table | nurizaesenbaeva
+ public | enrollments        | table | nurizaesenbaeva
+ public | enrollments_bad    | table | nurizaesenbaeva
+ public | large_table_2023   | table | nurizaesenbaeva
+ public | student_phones     | table | nurizaesenbaeva
+ public | students           | table | nurizaesenbaeva
+ public | students_3nf       | table | nurizaesenbaeva
+ public | students_3nf_bad   | table | nurizaesenbaeva
+(11 rows)
