@@ -1,0 +1,77 @@
+
+postgres=# \dt
+                     List of tables
+ Schema |        Name         | Type  |      Owner      
+--------+---------------------+-------+-----------------
+ public | course_enrollments  | table | nurizaesenbaeva
+ public | courses             | table | nurizaesenbaeva
+ public | customers           | table | nurizaesenbaeva
+ public | departments         | table | nurizaesenbaeva
+ public | employee_skills     | table | nurizaesenbaeva
+ public | employees           | table | nurizaesenbaeva
+ public | orders              | table | nurizaesenbaeva
+ public | product_reviews     | table | nurizaesenbaeva
+ public | products            | table | nurizaesenbaeva
+ public | sales               | table | nurizaesenbaeva
+ public | sales_data          | table | nurizaesenbaeva
+ public | student_enrollments | table | nurizaesenbaeva
+ public | student_phones      | table | nurizaesenbaeva
+ public | students            | table | nurizaesenbaeva
+ public | students_bad        | table | nurizaesenbaeva
+ public | students_table      | table | nurizaesenbaeva
+ public | transactions        | table | nurizaesenbaeva
+ public | users               | table | nurizaesenbaeva
+(18 rows)
+
+
+postgres=# \d
+                              List of relations
+ Schema |                 Name                  |   Type   |      Owner      
+--------+---------------------------------------+----------+-----------------
+ public | course_enrollments                    | table    | nurizaesenbaeva
+ public | courses                               | table    | nurizaesenbaeva
+ public | courses_course_id_seq                 | sequence | nurizaesenbaeva
+ public | customers                             | table    | nurizaesenbaeva
+ public | departments                           | table    | nurizaesenbaeva
+ public | departments_dept_id_seq               | sequence | nurizaesenbaeva
+ public | employee_skills                       | table    | nurizaesenbaeva
+ public | employees                             | table    | nurizaesenbaeva
+ public | orders                                | table    | nurizaesenbaeva
+ public | orders_order_id_seq                   | sequence | nurizaesenbaeva
+ public | product_reviews                       | table    | nurizaesenbaeva
+ public | products                              | table    | nurizaesenbaeva
+ public | sales                                 | table    | nurizaesenbaeva
+ public | sales_data                            | table    | nurizaesenbaeva
+ public | student_enrollments                   | table    | nurizaesenbaeva
+ public | student_enrollments_enrollment_id_seq | sequence | nurizaesenbaeva
+ public | student_phones                        | table    | nurizaesenbaeva
+ public | students                              | table    | nurizaesenbaeva
+ public | students_bad                          | table    | nurizaesenbaeva
+ public | students_student_id_seq               | sequence | nurizaesenbaeva
+ public | students_table                        | table    | nurizaesenbaeva
+ public | students_table_student_id_seq         | sequence | nurizaesenbaeva
+ public | transactions                          | table    | nurizaesenbaeva
+ public | transactions_transaction_id_seq       | sequence | nurizaesenbaeva
+ public | users                                 | table    | nurizaesenbaeva
+(25 rows)
+
+
+postgres=# \d orders
+                                    Table "public.orders"
+    Column     |          Type          | Collation | Nullable |           Default            
+---------------+------------------------+-----------+----------+------------------------------
+ order_id      | integer                |           | not null | generated always as identity
+ customer_name | character varying(100) |           |          | 
+ order_date    | date                   |           |          | CURRENT_DATE
+Indexes:
+    "orders_pkey" PRIMARY KEY, btree (order_id)
+
+
+postgres=# \d customers
+                        Table "public.customers"
+    Column     |          Type          | Collation | Nullable | Default 
+---------------+------------------------+-----------+----------+---------
+ customer_id   | integer                |           | not null | 
+ customer_name | character varying(100) |           |          | 
+Indexes:
+    "customers_pkey" PRIMARY KEY, btree (customer_id)
